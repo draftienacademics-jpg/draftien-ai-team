@@ -1,4 +1,5 @@
 import { formatDistanceToNowStrict } from "date-fns"
+import Link from "next/link"
 
 import { ChatAvatar } from "@/components/chat-avatar"
 import { ChatMenuButton } from "@/components/chat-menu-button"
@@ -39,6 +40,10 @@ export async function AppSidebar() {
             bots={bots.map(({ id, name, avatar }) => ({ id, name, avatar }))}
           />
         </div>
+        <nav className="flex flex-col gap-1 px-2 pb-3 text-sm group-data-[collapsible=icon]:hidden">
+          <Link href="/" className="rounded-md px-2 py-2 font-semibold hover:bg-sidebar-accent">Draftien AI HQ</Link>
+          <Link href="/work" className="rounded-md px-2 py-2 hover:bg-sidebar-accent">Work &amp; approvals</Link>
+        </nav>
         <SearchCommand>
           {chats.map((chat) => (
             <SearchCommandItem

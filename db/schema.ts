@@ -168,3 +168,50 @@ export type UsageKind = (typeof usageKind.enumValues)[number]
 export type NewUsageEntry = typeof usageEntries.$inferInsert
 export type ChatMember = typeof chatMembers.$inferSelect
 export type NewChatMember = typeof chatMembers.$inferInsert
+
+
+// Draftien Phase 1: human-managed, per-user task and internal approval queue.
+// These status changes DO NOT automatically execute agents or business actions.
+export const draftienTaskStatus = pgEnum("draftien_task_status", [
+  "planned", "in_review", "approved", "rejected",
+])
+
+export const draftienWorkItems = pgTable(
+  "draftien_work_items",
+  {
+    id: text().primaryKey().$defaultFn(() => nanoid()),
+    userId: text().notNull(),
+    title: text().notNull(),
+    brief: text().notNull(),
+    role: text().notNull(),
+    status: draftienTaskStatus().notNull().default("planned"),
+    deliverable: text(),
+    reviewedAt: timestamp({ withTimezone: true }),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("draftien_work_items_user_id_idx").on(table.userId)],
+)
+
+export const draftienTaskEvents = pgTable(
+  "draftien_task_events",
+  {
+    id: text().primaryKey().$defaultFn(() => nanoid()),
+    workItemId: text().notNull().references(() => draftienWorkItems.id, { onDelete: "cascade" }),
+    userId: text().notNull(),
+    action: text().notNull(),
+    note: text().notNull(),
+    createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [index("draftien_task_events_user_id_idx").on(table.userId)],
+)
+
+export const draftienWorkItemInsertSchema = createInsertSchema(draftienWorkItems, {
+  title: (schema) => schema.trim().min(3).max(120),
+  brief: (schema) => schema.trim().min(12).max(4000),
+  role: z.enum(["growth", "content", "student_success", "analytics"]),
+}).omit({
+  id: true, userId: true, status: true, deliverable: true,
+  reviewedAt: true, createdAt: true, updatedAt: true,
+})
+export type DraftienWorkItem = typeof draftienWorkItems.$inferSelect

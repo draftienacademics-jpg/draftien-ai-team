@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
 import { shadcn } from "@clerk/ui/themes"
 import { Geist, Geist_Mono } from "next/font/google"
@@ -7,6 +8,11 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toast"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
+
+export const metadata: Metadata = {
+  title: "Draftien AI Headquarters",
+  description: "Draftien internal AI workforce and approval workspace",
+}
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 

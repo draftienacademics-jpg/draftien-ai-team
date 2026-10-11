@@ -45,30 +45,14 @@ import { Spinner } from "@/components/ui/spinner"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/toast"
 import { botInsertSchema, type Bot } from "@/db/schema"
+import { DRAFTIEN_ROLES } from "@/lib/draftien/roles"
 import { usePaywall } from "@/hooks/use-paywall"
 
-const presets = [
-  {
-    job: "Research assistant",
-    instructions:
-      "Find reliable sources, summarize what they say, and cite every claim. Say so when the evidence is thin.",
-  },
-  {
-    job: "Code reviewer",
-    instructions:
-      "Review changes for bugs, security issues, and unclear code. Point to the exact lines and suggest a fix.",
-  },
-  {
-    job: "Writing editor",
-    instructions:
-      "Tighten prose without changing its voice. Explain each edit briefly and flag anything ambiguous.",
-  },
-  {
-    job: "Tutor",
-    instructions:
-      "Teach step by step, check understanding with questions, and give hints before giving answers.",
-  },
-]
+const presets = DRAFTIEN_ROLES.map((role) => ({
+  name: role.name,
+  job: role.job,
+  instructions: role.instructions,
+}))
 
 // Asks for confirmation, then deletes the bot and leaves its chat
 function BotDeleteButton({
@@ -181,6 +165,9 @@ function BotForm({ bot, onSaved }: { bot?: Bot; onSaved: () => void }) {
             size="sm"
             className="rounded-full"
             onClick={() => {
+              if (!form.getValues("name")) {
+                form.setValue("name", preset.name, { shouldDirty: true, shouldValidate: true })
+              }
               form.setValue("job", preset.job, {
                 shouldDirty: true,
                 shouldValidate: true,
@@ -248,7 +235,7 @@ function BotForm({ bot, onSaved }: { bot?: Bot; onSaved: () => void }) {
               <Input
                 {...field}
                 id="bot-job"
-                placeholder="Research assistant"
+                placeholder="Growth and enrollment strategist"
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
               />

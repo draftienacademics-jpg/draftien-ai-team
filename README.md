@@ -1,3 +1,10 @@
+# Draftien AI Headquarters — internal evaluation
+
+> Phase 1 workspace and manual approval queue. See [Draftien setup](docs/DRAFTIEN_SETUP.md).
+> This upstream-derived repository has no declared commercial license. Resolve permissions before any commercial deployment.
+
+---
+
 <div align="center">
 
 <img src="public/logo.svg" alt="AI Teammates logo" width="128" height="128" />
